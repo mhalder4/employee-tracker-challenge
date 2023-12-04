@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const { Table, printTable } = require("console-table-printer");
 // require("dotenv").config();
 const Queries = require("./db/queries");
 
@@ -176,6 +177,15 @@ async function findEmployees() {
   return employees;
 }
 
+function handleTable(info) {
+  const table = new Table();
+
+  info.forEach(item => {
+    table.addRow(item, { color: "green" });
+  });
+
+  table.printTable();
+}
 
 
 const query = new Queries;
@@ -191,33 +201,38 @@ async function inquirerPrompt() {
       switch (answers.choice) {
         case "View all departments":
           const deptsQuery = await query.selectDepts();
-          console.log(deptsQuery[0]);
+          handleTable(deptsQuery[0]);
+          // console.log(deptsQuery[0]);
           // isDone = true;
           return inquirerPrompt();
         case "View all roles":
           const rolesQuery = await query.selectRoles();
-          console.log(rolesQuery[0]);
+          handleTable(rolesQuery[0]);
           // isDone = true;
           return inquirerPrompt();
         case "View all employees":
           const employeesQuery = await query.selectEmployees();
-          console.log(employeesQuery[0]);
+          handleTable(employeesQuery[0]);
           // isDone = true;
           return inquirerPrompt();
         case "Add a department":
           await query.addDept(answers.deptName);
+          console.log("\x1b[32m%s\x1b[0m", `Added ${answers.deptName} to the database.`);
           // isDone = true;
           return inquirerPrompt();
         case "Add a role":
-          await query.addRole(answers)
+          await query.addRole(answers);
+          console.log("\x1b[32m%s\x1b[0m", `Added ${answers.roleName} to the database.`);
           // isDone = true;
           return inquirerPrompt();
         case "Add an employee":
-          await query.addEmployee(answers)
+          await query.addEmployee(answers);
+          console.log("\x1b[32m%s\x1b[0m", `Added ${answers.employFName} ${answers.employLName} to the database.`);
           // isDone = true;
           return inquirerPrompt();
         case "Update an employee role":
-          await query.updateRole(answers)
+          await query.updateRole(answers);
+          console.log("\x1b[32m%s\x1b[0m", `Updated employee's role.`);
           // isDone = true;
           return inquirerPrompt();
         case "Exit":
