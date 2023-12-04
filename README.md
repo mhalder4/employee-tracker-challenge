@@ -10,10 +10,15 @@ This project is an employee tracker designed to help manage employees within a c
 - [Tests](#tests)
 ## Installation
 The pertinent files for the project, including this README can all be found in the Github repository located at: https://github.com/mhalder4/employee-tracker-challenge.
+
+The user will first need to use `npm i` to install the necessary dependencies. After this, they will have to enter the MySQL shell with `mysql -u root -p` and enter their password when prompted. They can then run `source db/schema.sql` followed by `source db/seeds.sql` to create the database and seed the tables. The program will then be prepared for usage.
 ## Usage
 Once the program is installed, it can be used by typing `node index.js` into the console. A list of options will then appear. This list can be scrolled through with the arrow keys and an option can be selected with the enter key. Depending on the selection, the user may either be shown some data from the database or guided through some additional questions to add some more data to the database. The user can arrow to the “Edit” option when they want to close the program.
 
 A gif of the program running can be seen below.
+
+![A gif of the program running.](./assets/gifs/employee-tracker-challenge.gif)
+
 ## Credits
 N/A
 ## License
