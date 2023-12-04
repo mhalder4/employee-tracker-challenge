@@ -1,18 +1,19 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const { Table, printTable } = require("console-table-printer");
-// require("dotenv").config();
 const Queries = require("./db/queries");
 
+require("dotenv").config();
 
+// Creates a connection to the MySQL database
 const db = mysql.createConnection(
   {
     host: 'localhost',
     // MySQL username,
-    user: 'root',
+    user: process.env.DB_USER,
     // MySQL password
-    password: 'levcol26',
-    database: 'employees_db'
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
   },
   console.log(`Connected to the employees_db database.`)
 );
@@ -28,8 +29,7 @@ const db = mysql.createConnection(
   -Update an employee role
 */
 
-
-
+// A set of all the questions being asked
 const initalQues = [
   {
     type: "list",
@@ -101,7 +101,6 @@ const initalQues = [
     name: "employManager",
     choices: findEmployees,
     when(answers) {
-      // console.log(answers);
       return !checkInput("employRole")(answers)
     }
   },
@@ -120,31 +119,27 @@ const initalQues = [
     name: "roleUpdateRole",
     choices: findRoles,
     when(answers) {
-      // console.log(answers);
       return !checkInput("roleUpdateEmploy")(answers)
     }
   },
 
 ];
 
+// Used to check what the previous question's answer was in inquirer
 function checkList(name, choice) {
-  // console.log(name);
   return function (answers) {
-    // console.log(answers);
-    // console.log((answers[name]) == choice);
     return (answers[name] == choice);
   };
 }
 
+// Used to check if the previous question in inquirer was answered
 function checkInput(choice) {
-  // console.log(choice);
   return function (answers) {
-    // console.log(answers[choice]);
-    // console.log(!answers[choice]);
     return (!answers[choice]);
   };
 }
 
+// Finds the departments that currently exist in the database and returns an array of them
 async function findDepts() {
   const depts = [];
   const deptsInfo = await query.selectDepts();
@@ -155,6 +150,7 @@ async function findDepts() {
   return depts;
 }
 
+// Finds the roles that currently exist in the database and returns an array of them
 async function findRoles() {
   const roles = [];
   const rolesInfo = await query.selectRoles();
@@ -165,6 +161,7 @@ async function findRoles() {
   return roles;
 }
 
+// Finds the employees that currently exist in the database and returns an array of them
 async function findEmployees() {
   const employees = [];
   const employeesInfo = await query.selectEmployees();
@@ -177,6 +174,7 @@ async function findEmployees() {
   return employees;
 }
 
+// Creates a table to format the incoming database info
 function handleTable(info) {
   const table = new Table();
 
@@ -187,75 +185,62 @@ function handleTable(info) {
   table.printTable();
 }
 
-
+// Accesses the Query class created that has all the SQL queries and creates a new instance
 const query = new Queries;
 
-// query.selectDepts();
-
+// Runs the inquirer prompt
 async function inquirerPrompt() {
 
   inquirer
     .prompt(initalQues)
     .then(async (answers) => {
-      // console.log(answers);
       switch (answers.choice) {
         case "View all departments":
           const deptsQuery = await query.selectDepts();
           handleTable(deptsQuery[0]);
-          // console.log(deptsQuery[0]);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "View all roles":
           const rolesQuery = await query.selectRoles();
           handleTable(rolesQuery[0]);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "View all employees":
           const employeesQuery = await query.selectEmployees();
           handleTable(employeesQuery[0]);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "Add a department":
           await query.addDept(answers.deptName);
           console.log("\x1b[32m%s\x1b[0m", `Added ${answers.deptName} to the database.`);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "Add a role":
           await query.addRole(answers);
           console.log("\x1b[32m%s\x1b[0m", `Added ${answers.roleName} to the database.`);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "Add an employee":
           await query.addEmployee(answers);
           console.log("\x1b[32m%s\x1b[0m", `Added ${answers.employFName} ${answers.employLName} to the database.`);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "Update an employee role":
           await query.updateRole(answers);
           console.log("\x1b[32m%s\x1b[0m", `Updated employee's role.`);
-          // isDone = true;
+
           return inquirerPrompt();
+
         case "Exit":
           process.exit();
       }
-
-
-
-
-      // if (answers.choice === "View all departments") {
-      //   await query.selectDepts();
-      //   return inquirerPrompt();
-      // }
-      // if (answers.choice === "Exit") {
-      //   // query.selectDepts();
-      //   process.exit();
-      // }
     });
-
-  // if (isDone) 
-
-
-
 }
 
 
@@ -268,15 +253,3 @@ db.connect(async () => {
   await start();
 
 });
-
-
-// inquirer
-//   .prompt(initalQues)
-//   .then(answers => {
-//     console.log(answers);
-//     if (answers.choice === "View all departments") {
-//       // query.selectDepts();
-//     }
-//     return inquirerPrompt();
-//   })
-
