@@ -13,7 +13,7 @@ const db = mysql.createConnection(
     password: 'levcol26',
     database: 'employees_db'
   },
-  console.log(`Connected to the movies_db database.`)
+  console.log(`Connected to the employees_db database.`)
 );
 
 /*
@@ -104,6 +104,25 @@ const initalQues = [
       return !checkInput("employRole")(answers)
     }
   },
+  {
+    type: "list",
+    message: "Which employee's role would you like to update?",
+    name: "roleUpdateEmploy",
+    choices: findEmployees,
+    when(answers) {
+      return checkList("choice", "Update an employee role")(answers)
+    }
+  },
+  {
+    type: "list",
+    message: "Which role would you like to assign the selected employee?",
+    name: "roleUpdateRole",
+    choices: findRoles,
+    when(answers) {
+      // console.log(answers);
+      return !checkInput("roleUpdateEmploy")(answers)
+    }
+  },
 
 ];
 
@@ -161,7 +180,6 @@ async function findEmployees() {
 
 const query = new Queries;
 
-
 // query.selectDepts();
 
 async function inquirerPrompt() {
@@ -174,41 +192,39 @@ async function inquirerPrompt() {
         case "View all departments":
           const deptsQuery = await query.selectDepts();
           console.log(deptsQuery[0]);
-          // break;
-          process.exit();
+          // isDone = true;
+          return inquirerPrompt();
         case "View all roles":
           const rolesQuery = await query.selectRoles();
           console.log(rolesQuery[0]);
-          // break;
-          process.exit();
+          // isDone = true;
+          return inquirerPrompt();
         case "View all employees":
           const employeesQuery = await query.selectEmployees();
           console.log(employeesQuery[0]);
-          // break;
-          process.exit();
+          // isDone = true;
+          return inquirerPrompt();
         case "Add a department":
-          // console.log(answers)
           await query.addDept(answers.deptName);
-          process.exit();
-        // break;
+          // isDone = true;
+          return inquirerPrompt();
         case "Add a role":
-          // await query.addDept(answers.deptName);
           await query.addRole(answers)
-
-          console.log(answers);
-          process.exit();
+          // isDone = true;
+          return inquirerPrompt();
         case "Add an employee":
-          // await query.addDept(answers.deptName);
           await query.addEmployee(answers)
-
-          console.log(answers);
-          process.exit();
-
-
-        // break;
+          // isDone = true;
+          return inquirerPrompt();
+        case "Update an employee role":
+          await query.updateRole(answers)
+          // isDone = true;
+          return inquirerPrompt();
         case "Exit":
           process.exit();
       }
+
+
 
 
       // if (answers.choice === "View all departments") {
@@ -220,6 +236,8 @@ async function inquirerPrompt() {
       //   process.exit();
       // }
     });
+
+  // if (isDone) 
 
 
 

@@ -113,6 +113,26 @@ class Queries {
     // })
     // .catch(console.log);
   }
+
+  async updateRole(response) {
+    const { roleUpdateEmploy, roleUpdateRole } = response;
+    console.log(roleUpdateEmploy)
+    console.log(roleUpdateRole)
+    // console.log(roleDept)
+
+    const tempRole = await db.promise().query(`SELECT id FROM role WHERE title = "${roleUpdateRole}"`)
+
+    const roleId = await tempRole[0][0].id;
+
+    // // console.log(tempDept);
+    // console.log(roleId);
+
+    await db.promise().query(`UPDATE employee SET role_id = ${roleId} WHERE CONCAT(first_name, ' ', last_name) = "${roleUpdateEmploy}";`)
+    // .then(([rows, fields]) => {
+    //   // console.log(rows);
+    // })
+    // .catch(console.log);
+  }
 }
 
 
