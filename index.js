@@ -197,6 +197,12 @@ async function inquirerPrompt() {
 
           console.log(answers);
           process.exit();
+        case "Add an employee":
+          // await query.addDept(answers.deptName);
+          await query.addEmployee(answers)
+
+          console.log(answers);
+          process.exit();
 
 
         // break;
